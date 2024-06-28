@@ -155,23 +155,20 @@ export const loginUser = CatchAsyncError(
       const user = await userModel.findOne({ email }).select("+password");
 
       if (!user) {
-        return next(new ErrorHandler("Invalid email or password", 401));
-        // Use 401 status code for unauthorized access (invalid credentials)
+        return next(new ErrorHandler("Invalid email or password", 401)); // Use 401 for unauthorized
       }
 
       const isPasswordMatch = await user.comparePassword(password);
 
       if (!isPasswordMatch) {
-        return next(new ErrorHandler("Invalid email or password", 401));
-        // Again, 401 for unauthorized access (invalid credentials)
+        return next(new ErrorHandler("Invalid email or password", 401)); // Use 401 for unauthorized
       }
 
       // Assuming sendToken function sends back access and refresh tokens
       sendToken(user, 200, res);
-      // Return 200 status code for successful login
     } catch (error: any) {
-      return next(new ErrorHandler(error.message, 500));
-      // Use 500 status code for internal server error
+      console.error("Login Error:", error); // Log the error for debugging
+      return next(new ErrorHandler("Login failed", 500)); // Generic error message for internal server error
     }
   }
 );
