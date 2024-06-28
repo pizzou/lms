@@ -147,7 +147,7 @@ export const loginUser = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { email, password } = req.body as ILoginRequest;
-      console.log(email, password);
+
       if (!email || !password) {
         return next(new ErrorHandler("Please enter email and password", 400));
       }
@@ -155,19 +155,27 @@ export const loginUser = CatchAsyncError(
       const user = await userModel.findOne({ email }).select("+password");
 
       if (!user) {
-        return next(new ErrorHandler("Invalid email or password", 400));
+        return next(new ErrorHandler("Invalid email or password", 401));
+        // Use 401 status code for unauthorized access (invalid credentials)
       }
 
       const isPasswordMatch = await user.comparePassword(password);
+
       if (!isPasswordMatch) {
-        return next(new ErrorHandler("Invalid email or password", 400));
+        return next(new ErrorHandler("Invalid email or password", 401));
+        // Again, 401 for unauthorized access (invalid credentials)
       }
+
+      // Assuming sendToken function sends back access and refresh tokens
       sendToken(user, 200, res);
+      // Return 200 status code for successful login
     } catch (error: any) {
-      return next(new ErrorHandler(error.message, 400));
+      return next(new ErrorHandler(error.message, 500));
+      // Use 500 status code for internal server error
     }
   }
 );
+
 
 // logout user
 export const logoutUser = CatchAsyncError(
