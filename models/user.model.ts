@@ -6,7 +6,6 @@ import jwt from "jsonwebtoken";
 const emailRegexPattern: RegExp = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export interface IUser extends Document {
-  uid: string;
   name: string;
   email: string;
   password: string;
@@ -24,11 +23,6 @@ export interface IUser extends Document {
 
 const userSchema: Schema<IUser> = new mongoose.Schema(
   {
-    uid: {
-      type: String,
-      required: true,
-      unique: true,
-    },
     name: {
       type: String,
       required: [true, "Please enter your name"],
@@ -70,19 +64,12 @@ const userSchema: Schema<IUser> = new mongoose.Schema(
   { timestamps: true }
 );
 
-// Pre-save hook to ensure uid is unique and not null
+// Hash Password before saving
 userSchema.pre<IUser>("save", async function (next) {
   if (!this.isModified("password")) {
     next();
   }
   this.password = await bcrypt.hash(this.password, 10);
-  next();
-});
-
-userSchema.pre<IUser>("save", function (next) {
-  if (!this.uid) {
-    this.uid = `uid_${new Date().getTime()}_${Math.floor(Math.random() * 1000)}`;
-  }
   next();
 });
 
