@@ -6,6 +6,7 @@ import jwt from "jsonwebtoken";
 const emailRegexPattern: RegExp = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export interface IUser extends Document {
+  uid: string;
   name: string;
   email: string;
   password: string;
@@ -23,6 +24,14 @@ export interface IUser extends Document {
 
 const userSchema: Schema<IUser> = new mongoose.Schema(
   {
+    uid: {
+      type: String,
+      required: [true, "UID is required"],
+      unique: true,
+      default: function() {
+        return `uid_${new Date().getTime()}_${Math.floor(Math.random() * 1000)}`;
+      },
+    },
     name: {
       type: String,
       required: [true, "Please enter your name"],
