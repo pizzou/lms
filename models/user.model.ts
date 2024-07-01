@@ -26,11 +26,8 @@ const userSchema: Schema<IUser> = new mongoose.Schema(
   {
     uid: {
       type: String,
-      required: [true, "UID is required"],
+      required: true,
       unique: true,
-      default: function() {
-        return `uid_${new Date().getTime()}_${Math.floor(Math.random() * 1000)}`;
-      },
     },
     name: {
       type: String,
@@ -73,12 +70,19 @@ const userSchema: Schema<IUser> = new mongoose.Schema(
   { timestamps: true }
 );
 
-// Hash Password before saving
+// Pre-save hook to ensure uid is unique and not null
 userSchema.pre<IUser>("save", async function (next) {
   if (!this.isModified("password")) {
     next();
   }
   this.password = await bcrypt.hash(this.password, 10);
+  next();
+});
+
+userSchema.pre<IUser>("save", function (next) {
+  if (!this.uid) {
+    this.uid = `uid_${new Date().getTime()}_${Math.floor(Math.random() * 1000)}`;
+  }
   next();
 });
 
