@@ -85,9 +85,9 @@ export const createActivationToken = (user: any): IActivationToken => {
       user,
       activationCode,
     },
-    process.env.ACTIVATION_SECRET as Secret,
+    process.env.ACTIVATION_SECRET as string,
     {
-      expiresIn: "120m",
+      expiresIn: "1d",
     }
   );
 
@@ -108,7 +108,7 @@ export const activateUser = CatchAsyncError(
 
       const newUser: { user: IUser; activationCode: string } = jwt.verify(
         activation_token,
-        process.env.ACTIVATION_SECRET as Secret
+        process.env.ACTIVATION_SECRET as string
       ) as { user: IUser; activationCode: string };
 
       if (newUser.activationCode !== activation_code) {
