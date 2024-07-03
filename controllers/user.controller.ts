@@ -126,6 +126,7 @@ export const activateUser = CatchAsyncError(
         name,
         email,
         password,
+        uid: uuidv4(),
       });
 
       res.status(201).json({
@@ -450,3 +451,7 @@ export const deleteUser = CatchAsyncError(
     }
   }
 );
+function uuidv4(): any | string {
+  throw new Error("Function not implemented.");
+}
+

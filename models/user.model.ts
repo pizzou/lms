@@ -1,12 +1,11 @@
-require("dotenv").config();
 import mongoose, { Document, Model, Schema } from "mongoose";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { v4 as uuidv4 } from "uuid"; // import uuid library
 
 const emailRegexPattern: RegExp = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export interface IUser extends Document {
-  uid: string;
   name: string;
   email: string;
   password: string;
@@ -20,16 +19,11 @@ export interface IUser extends Document {
   comparePassword: (password: string) => Promise<boolean>;
   SignAccessToken: () => string;
   SignRefreshToken: () => string;
+  uid: string; // add uid to the interface
 }
 
 const userSchema: Schema<IUser> = new mongoose.Schema(
   {
-    uid: {
-      type: String,
-      required: true,
-      unique: true,
-      default: () => new mongoose.Types.ObjectId().toString()
-    },
     name: {
       type: String,
       required: [true, "Please enter your name"],
@@ -67,6 +61,11 @@ const userSchema: Schema<IUser> = new mongoose.Schema(
         courseId: String,
       },
     ],
+    uid: {
+      type: String,
+      default: uuidv4, // generate a unique id
+      unique: true,
+    },
   },
   { timestamps: true }
 );
