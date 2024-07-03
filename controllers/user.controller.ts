@@ -120,13 +120,14 @@ export const activateUser = CatchAsyncError(
       const existUser = await userModel.findOne({ email });
 
       if (existUser) {
-        return next(new ErrorHandler("Email already exist", 400));
+        return next(new ErrorHandler("Email already exists", 400));
       }
+
       const user = await userModel.create({
         name,
         email,
         password,
-        uid: uuidv4(),
+        uid: uuidv4(), // generate unique uid for each user
       });
 
       res.status(201).json({
