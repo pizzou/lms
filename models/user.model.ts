@@ -1,7 +1,7 @@
-require("dotenv").config();
 import mongoose, { Document, Model, Schema } from "mongoose";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { v4 as uuidv4 } from "uuid"; // import uuid library
 
 const emailRegexPattern: RegExp = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -19,6 +19,7 @@ export interface IUser extends Document {
   comparePassword: (password: string) => Promise<boolean>;
   SignAccessToken: () => string;
   SignRefreshToken: () => string;
+ 
 }
 
 const userSchema: Schema<IUser> = new mongoose.Schema(
@@ -34,7 +35,7 @@ const userSchema: Schema<IUser> = new mongoose.Schema(
         validator: function (value: string) {
           return emailRegexPattern.test(value);
         },
-        message: "please enter a valid email",
+        message: "Please enter a valid email",
       },
       unique: true,
     },
@@ -60,39 +61,40 @@ const userSchema: Schema<IUser> = new mongoose.Schema(
         courseId: String,
       },
     ],
+   
   },
   { timestamps: true }
 );
 
 // Hash Password before saving
-// userSchema.pre<IUser>("save", async function (next) {
-//   if (!this.isModified("password")) {
-//     next();
-//   }
-//   this.password = await bcrypt.hash(this.password, 10);
-//   next();
-// });
+userSchema.pre<IUser>("save", async function (next) {
+  if (!this.isModified("password")) {
+    next();
+  }
+  this.password = await bcrypt.hash(this.password, 10);
+  next();
+});
 
 // sign access token
-// userSchema.methods.SignAccessToken = function () {
-//   return jwt.sign({ id: this._id }, process.env.ACCESS_TOKEN || "", {
-//     expiresIn: "5m",
-//   });
-// };
+userSchema.methods.SignAccessToken = function () {
+  return jwt.sign({ id: this._id }, process.env.ACCESS_TOKEN || "", {
+    expiresIn: "5m",
+  });
+};
 
 // sign refresh token
-// userSchema.methods.SignRefreshToken = function () {
-//   return jwt.sign({ id: this._id }, process.env.REFRESH_TOKEN || "", {
-//     expiresIn: "3d",
-//   });
-// };
+userSchema.methods.SignRefreshToken = function () {
+  return jwt.sign({ id: this._id }, process.env.REFRESH_TOKEN || "", {
+    expiresIn: "3d",
+  });
+};
 
 // compare password
-// userSchema.methods.comparePassword = async function (
-//   enteredPassword: string
-// ): Promise<boolean> {
-//   return await bcrypt.compare(enteredPassword, this.password);
-// };
+userSchema.methods.comparePassword = async function (
+  enteredPassword: string
+): Promise<boolean> {
+  return await bcrypt.compare(enteredPassword, this.password);
+};
 
 const userModel: Model<IUser> = mongoose.model("User", userSchema);
 
