@@ -85,9 +85,9 @@ export const createActivationToken = (user: any): IActivationToken => {
       user,
       activationCode,
     },
-    process.env.ACTIVATION_SECRET as string,
+    process.env.ACTIVATION_SECRET as Secret,
     {
-      expiresIn: "1d",
+      expiresIn: "5m",
     }
   );
 
@@ -120,14 +120,12 @@ export const activateUser = CatchAsyncError(
       const existUser = await userModel.findOne({ email });
 
       if (existUser) {
-        return next(new ErrorHandler("Email already exists", 400));
+        return next(new ErrorHandler("Email already exist", 400));
       }
-
       const user = await userModel.create({
         name,
         email,
         password,
-        uid: uuidv4(), // generate unique uid for each user
       });
 
       res.status(201).json({
@@ -149,7 +147,7 @@ export const loginUser = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { email, password } = req.body as ILoginRequest;
-
+      console.log(email, password);
       if (!email || !password) {
         return next(new ErrorHandler("Please enter email and password", 400));
       }
@@ -157,24 +155,19 @@ export const loginUser = CatchAsyncError(
       const user = await userModel.findOne({ email }).select("+password");
 
       if (!user) {
-        return next(new ErrorHandler("Invalid email or password", 401)); // Use 401 for unauthorized
+        return next(new ErrorHandler("Invalid email or password", 400));
       }
 
       const isPasswordMatch = await user.comparePassword(password);
-
       if (!isPasswordMatch) {
-        return next(new ErrorHandler("Invalid email or password", 401)); // Use 401 for unauthorized
+        return next(new ErrorHandler("Invalid email or password", 400));
       }
-
-      // Assuming sendToken function sends back access and refresh tokens
       sendToken(user, 200, res);
     } catch (error: any) {
-      console.error("Login Error:", error); // Log the error for debugging
-      return next(new ErrorHandler("Login failed", 500)); // Generic error message for internal server error
+      return next(new ErrorHandler(error.message, 400));
     }
   }
 );
-
 
 // logout user
 export const logoutUser = CatchAsyncError(
@@ -198,7 +191,7 @@ export const logoutUser = CatchAsyncError(
 export const updateAccessToken = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const refresh_token = req.headers.refreshToken as string;
+      const refresh_token = req.headers["refresh-token"] as string;
       const decoded = jwt.verify(
         refresh_token,
         process.env.REFRESH_TOKEN as string
@@ -452,7 +445,3 @@ export const deleteUser = CatchAsyncError(
     }
   }
 );
-function uuidv4(): any | string {
-  throw new Error("Function not implemented.");
-}
-
