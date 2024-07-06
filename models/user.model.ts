@@ -65,34 +65,34 @@ const userSchema: Schema<IUser> = new mongoose.Schema(
 );
 
 // Hash Password before saving
-userSchema.pre<IUser>("save", async function (next) {
-  if (!this.isModified("password")) {
-    next();
-  }
-  this.password = await bcrypt.hash(this.password, 10);
-  next();
-});
+// userSchema.pre<IUser>("save", async function (next) {
+//   if (!this.isModified("password")) {
+//     next();
+//   }
+//   this.password = await bcrypt.hash(this.password, 10);
+//   next();
+// });
 
 // sign access token
-userSchema.methods.SignAccessToken = function () {
-  return jwt.sign({ id: this._id }, process.env.ACCESS_TOKEN || "", {
-    expiresIn: "5m",
-  });
-};
+// userSchema.methods.SignAccessToken = function () {
+//   return jwt.sign({ id: this._id }, process.env.ACCESS_TOKEN || "", {
+//     expiresIn: "5m",
+//   });
+// };
 
 // sign refresh token
-userSchema.methods.SignRefreshToken = function () {
-  return jwt.sign({ id: this._id }, process.env.REFRESH_TOKEN || "", {
-    expiresIn: "3d",
-  });
-};
+// userSchema.methods.SignRefreshToken = function () {
+//   return jwt.sign({ id: this._id }, process.env.REFRESH_TOKEN || "", {
+//     expiresIn: "3d",
+//   });
+// };
 
 // compare password
-userSchema.methods.comparePassword = async function (
-  enteredPassword: string
-): Promise<boolean> {
-  return await bcrypt.compare(enteredPassword, this.password);
-};
+// userSchema.methods.comparePassword = async function (
+//   enteredPassword: string
+// ): Promise<boolean> {
+//   return await bcrypt.compare(enteredPassword, this.password);
+// };
 
 const userModel: Model<IUser> = mongoose.model("User", userSchema);
 
