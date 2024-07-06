@@ -2,10 +2,11 @@ require("dotenv").config();
 import mongoose, { Document, Model, Schema } from "mongoose";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-
+import { v4 as uuidv4 } from "uuid"; 
 const emailRegexPattern: RegExp = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export interface IUser extends Document {
+  uid: string;
   name: string;
   email: string;
   password: string;
@@ -23,6 +24,12 @@ export interface IUser extends Document {
 
 const userSchema: Schema<IUser> = new mongoose.Schema(
   {
+    uid: {
+      type: String,
+      unique: true,
+      default: uuidv4, 
+      required: true,
+    },
     name: {
       type: String,
       required: [true, "Please enter your name"],
