@@ -73,7 +73,7 @@ const commentSchema = new Schema<IComment>({
 
 const courseDataSchema = new Schema<ICourseData>({
   videoUrl: String,
-  videoThumbnail: Object,
+  
   title: String,
   videoSection: String,
   description: String,
@@ -93,10 +93,7 @@ const courseSchema = new Schema<ICourse>({
     type: String,
     required: true,
   },
-  // categories:{
-  //   type:String,
-    
-  // },
+  
   price: {
     type: Number,
     required: true,
