@@ -7,6 +7,8 @@ import dotenv from "dotenv"; // Import dotenv directly for clarity
 dotenv.config();
 
 const server = http.createServer(app);
+const cors = require('cors');
+app.use(cors());
 
 // Cloudinary configuration
 cloudinary.config({
