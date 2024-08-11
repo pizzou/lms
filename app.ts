@@ -21,14 +21,11 @@ app.use(cookieParser());
 // cors => cross origin resource sharing
 app.use(
   cors({
-    origin: 'http://localhost:3000', // Allow requests from this origin
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allowed methods
-    allowedHeaders: ['Content-Type', 'Authorization'], // Allowed headers
-    credentials: true, // Allow cookies and authorization headers
+    origin: true, 
+    credentials: true, 
   })
 );
 
-app.options('*', cors()); // Preflight requests handling
 // api requests limit
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
