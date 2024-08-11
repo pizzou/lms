@@ -146,6 +146,7 @@ interface ILoginRequest {
 export const loginUser = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
+      console.log(req.body)
       const { email, password } = req.body as ILoginRequest;
       console.log(email, password);
       if (!email || !password) {
