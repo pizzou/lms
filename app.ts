@@ -20,7 +20,10 @@ app.use(cookieParser());
 
 // cors => cross origin resource sharing
 app.use(
-  cors()
+  cors({
+    origin: true, 
+    credentials: true, 
+  })
 );
 
 // api requests limit
