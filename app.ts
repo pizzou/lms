@@ -21,8 +21,16 @@ app.use(cookieParser());
 // cors => cross origin resource sharing
 app.use(
   cors({
-    origin: true, 
-    credentials: true, 
+    origin: 'http://localhost:3000', // Allow requests from this origin
+    credentials: true, // Include credentials like cookies or authorization headers
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allow these HTTP methods
+    allowedHeaders: [
+      'Content-Type',
+      'Authorization',
+      'X-Requested-With',
+      'Accept',
+      'Origin',
+    ], // Allow these headers
   })
 );
 
