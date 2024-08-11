@@ -22,18 +22,13 @@ app.use(cookieParser());
 app.use(
   cors({
     origin: 'http://localhost:3000', // Allow requests from this origin
-    credentials: true, // Include credentials like cookies or authorization headers
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allow these HTTP methods
-    allowedHeaders: [
-      'Content-Type',
-      'Authorization',
-      'X-Requested-With',
-      'Accept',
-      'Origin',
-    ], // Allow these headers
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allowed methods
+    allowedHeaders: ['Content-Type', 'Authorization'], // Allowed headers
+    credentials: true, // Allow cookies and authorization headers
   })
 );
 
+app.options('*', cors()); // Preflight requests handling
 // api requests limit
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
