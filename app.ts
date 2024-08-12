@@ -29,15 +29,13 @@ app.use(express.json({ limit: "50mb" }));
 app.use(cookieParser());
 
 // CORS - Cross-Origin Resource Sharing
-app.use((req: Request, res: Response, next: NextFunction) => {
-  res.header("Access-Control-Allow-Origin", "http://localhost:3000");
-  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  res.header("Access-Control-Allow-Credentials", "true");
-  console.log("CORS headers set!");
-  next();
-});
-app.options('*', cors()); // Handle preflight requests
+app.use(cors({
+  origin: '*', // Allow all origins (use specific domains in production)
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true, 
+}));
+
 
 // Routes
 app.use(
