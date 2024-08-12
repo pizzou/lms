@@ -30,7 +30,7 @@ app.use(cookieParser());
 
 // CORS - Cross-Origin Resource Sharing
 app.use(cors({
-  origin: '*', // Allow all origins (use specific domains in production)
+  origin: '*', 
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true, 
