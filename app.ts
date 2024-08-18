@@ -1,6 +1,5 @@
 require("dotenv").config();
 import express, { NextFunction, Request, Response } from "express";
-export const app = express();
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import { ErrorMiddleware } from "./middleware/error";
@@ -12,28 +11,35 @@ import analyticsRouter from "./routes/analytics.route";
 import layoutRouter from "./routes/layout.route";
 import { rateLimit } from "express-rate-limit";
 
-// body parser
+// Initialize Express app
+export const app = express();
+
+// Apply rate limiting to all requests
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+});
+
+// Apply rate limiting middleware to all requests
+app.use(limiter);
+
+// Body parser middleware
 app.use(express.json({ limit: "50mb" }));
 
-// cookie parser
+// Cookie parser middleware
 app.use(cookieParser());
 
-// cors => cross origin resource sharing
+// CORS (Cross-Origin Resource Sharing)
 app.use(
   cors({
-   
+    origin: "http://localhost:3000", // Update to your frontend's origin
+    credentials: true, // Allow credentials (cookies, authorization headers, etc.)
   })
 );
 
-// api requests limit
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 100,
-  standardHeaders: "draft-7",
-  legacyHeaders: false,
-});
-
-// routes
+// Define your routes
 app.use(
   "/api/v1",
   userRouter,
@@ -44,21 +50,20 @@ app.use(
   layoutRouter
 );
 
-// testing api
-app.get("/test", (req: Request, res: Response, next: NextFunction) => {
+// Testing API route
+app.get("/test", (req: Request, res: Response) => {
   res.status(200).json({
-    succcess: true,
+    success: true,
     message: "API is working",
   });
 });
 
-// unknown route
+// Handle unknown routes
 app.all("*", (req: Request, res: Response, next: NextFunction) => {
   const err = new Error(`Route ${req.originalUrl} not found`) as any;
   err.statusCode = 404;
   next(err);
 });
 
-// middleware calls
-app.use(limiter);
+// Error middleware
 app.use(ErrorMiddleware);
