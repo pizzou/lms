@@ -32,16 +32,20 @@ app.use(express.json({ limit: "50mb" }));
 app.use(cookieParser());
 
 // CORS (Cross-Origin Resource Sharing)
-app.use(
-  cors({
-    origin: "http://localhost:3000", // your frontend origin
-    methods: "GET,HEAD,PUT,PATCH,POST,DELETE", // allowed HTTP methods
-    credentials: true, // allow credentials (cookies, authorization headers, etc.)
-    allowedHeaders: "Content-Type,Authorization", // allowed headers
-  })
-);
 
-app.options("*", cors()); // preflight OPTIONS request for all routes
+
+const allowedOrigins = ['http://localhost:3000', 'https://your-frontend-domain.com'];
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+}));
+
 
 // Define your routes
 app.use(
