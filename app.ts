@@ -34,10 +34,14 @@ app.use(cookieParser());
 // CORS (Cross-Origin Resource Sharing)
 app.use(
   cors({
-    origin: "http://localhost:3000", // Update to your frontend's origin
-    credentials: true, // Allow credentials (cookies, authorization headers, etc.)
+    origin: "http://localhost:3000", // your frontend origin
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE", // allowed HTTP methods
+    credentials: true, // allow credentials (cookies, authorization headers, etc.)
+    allowedHeaders: "Content-Type,Authorization", // allowed headers
   })
 );
+
+app.options("*", cors()); // preflight OPTIONS request for all routes
 
 // Define your routes
 app.use(
