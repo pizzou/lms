@@ -489,8 +489,6 @@ export const generateVideoUrl = CatchAsyncError(
       return next(new ErrorHandler(error.message, 400));
     }
   }
-<<<<<<< HEAD
+
 );
-=======
-);
->>>>>>> 16941003efc7d7482b012d6cf7b8613fd2acd04d
+

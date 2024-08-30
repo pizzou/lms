@@ -1,15 +1,11 @@
-<<<<<<< HEAD
+
 require("dotenv").config();
-=======
->>>>>>> 16941003efc7d7482b012d6cf7b8613fd2acd04d
+
 import mongoose, { Document, Model, Schema } from "mongoose";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
-<<<<<<< HEAD
-=======
 
->>>>>>> 16941003efc7d7482b012d6cf7b8613fd2acd04d
 const emailRegexPattern: RegExp = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export interface IUser extends Document {
@@ -26,10 +22,7 @@ export interface IUser extends Document {
   comparePassword: (password: string) => Promise<boolean>;
   SignAccessToken: () => string;
   SignRefreshToken: () => string;
-<<<<<<< HEAD
-=======
- 
->>>>>>> 16941003efc7d7482b012d6cf7b8613fd2acd04d
+
 }
 
 const userSchema: Schema<IUser> = new mongoose.Schema(
@@ -45,11 +38,11 @@ const userSchema: Schema<IUser> = new mongoose.Schema(
         validator: function (value: string) {
           return emailRegexPattern.test(value);
         },
-<<<<<<< HEAD
+
         message: "please enter a valid email",
-=======
-        message: "Please enter a valid email",
->>>>>>> 16941003efc7d7482b012d6cf7b8613fd2acd04d
+
+        
+
       },
       unique: true,
     },
@@ -75,10 +68,7 @@ const userSchema: Schema<IUser> = new mongoose.Schema(
         courseId: String,
       },
     ],
-<<<<<<< HEAD
-=======
-   
->>>>>>> 16941003efc7d7482b012d6cf7b8613fd2acd04d
+
   },
   { timestamps: true }
 );
