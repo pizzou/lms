@@ -1,8 +1,8 @@
 require("dotenv").config();
 import express, { NextFunction, Request, Response } from "express";
-export const app = express();
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import { rateLimit } from "express-rate-limit";
 import { ErrorMiddleware } from "./middleware/error";
 import userRouter from "./routes/user.route";
 import courseRouter from "./routes/course.route";
@@ -10,62 +10,53 @@ import orderRouter from "./routes/order.route";
 import notificationRouter from "./routes/notification.route";
 import analyticsRouter from "./routes/analytics.route";
 import layoutRouter from "./routes/layout.route";
-import { rateLimit } from "express-rate-limit";
 
-// body parser
+export const app = express();
+
+// Body parser
 app.use(express.json({ limit: "50mb" }));
 
-// cookie parser
+// Cookie parser
 app.use(cookieParser());
 
-// cors => cross origin resource sharing
-
-
-// Modify the corsOptions object to allow requests from localhost:3000
+// CORS setup
 const corsOptions = {
-  origin: 'http://localhost:3000', // Allow your frontend's origin
+  origin: 'http://localhost:3000', // The URL of your frontend
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  credentials: true, // Allow credentials (cookies, etc.)
-  allowedHeaders: 'Content-Type,Authorization', // Headers the frontend can send
+  credentials: true, // Allow credentials (cookies, authorization headers, etc.)
+  allowedHeaders: 'Content-Type,Authorization', // Allow these headers
 };
 
 app.use(cors(corsOptions));
 
-
-// api requests limit
+// API request rate limiting
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 100,
-  standardHeaders: "draft-7",
-  legacyHeaders: false,
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // Limit each IP to 100 requests per windowMs
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
 });
 
-// routes
-app.use(
-  "/api/v1",
-  userRouter,
-  orderRouter,
-  courseRouter,
-  notificationRouter,
-  analyticsRouter,
-  layoutRouter
-);
+// Apply the rate limiting middleware to all requests
+app.use(limiter);
 
-// testing api
+// Define API routes
+app.use("/api/v1", userRouter, orderRouter, courseRouter, notificationRouter, analyticsRouter, layoutRouter);
+
+// Testing API
 app.get("/test", (req: Request, res: Response, next: NextFunction) => {
   res.status(200).json({
-    succcess: true,
+    success: true,
     message: "API is working",
   });
 });
 
-// unknown route
+// Handle unknown routes
 app.all("*", (req: Request, res: Response, next: NextFunction) => {
   const err = new Error(`Route ${req.originalUrl} not found`) as any;
   err.statusCode = 404;
   next(err);
 });
 
-// middleware calls
-app.use(limiter);
+// Middleware to handle errors
 app.use(ErrorMiddleware);
