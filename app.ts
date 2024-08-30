@@ -21,17 +21,18 @@ app.use(cookieParser());
 
 // CORS setup
 const corsOptions = {
-  origin: 'http://localhost:3000',
+  origin: 'http://localhost:3000', // Allow requests from this origin
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-  credentials: true,
+  credentials: true, // Allow cookies to be sent
   allowedHeaders: 'Content-Type,Authorization',
 };
 
-// Apply CORS middleware
 app.use(cors(corsOptions));
 
-// Handle preflight `OPTIONS` requests
+// Handle preflight `OPTIONS` requests for all routes
 app.options('*', cors(corsOptions));
+
+
 
 // API request rate limiting
 const limiter = rateLimit({
