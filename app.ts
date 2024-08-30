@@ -19,14 +19,17 @@ app.use(express.json({ limit: "50mb" }));
 app.use(cookieParser());
 
 // cors => cross origin resource sharing
+
+
+// Modify the corsOptions object to allow requests from localhost:3000
 const corsOptions = {
-  origin: 'http://localhost:3000', // The URL of the frontend application
+  origin: 'http://localhost:3000', // Replace this with your frontend's origin
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  credentials: true, // Allow credentials (cookies, authorization headers, etc.)
+  credentials: true, // This allows the server to accept cookies from the frontend
+  allowedHeaders: 'Content-Type,Authorization', // Specify the allowed headers
 };
 
-// Apply CORS middleware with options
-app.use(cors(corsOptions));
+app.use(cors(corsOptions));;
 
 
 // api requests limit
