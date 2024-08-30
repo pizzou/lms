@@ -1,4 +1,6 @@
-import express, { Request, Response, NextFunction } from "express";
+require("dotenv").config();
+import express, { NextFunction, Request, Response } from "express";
+export const app = express();
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import { ErrorMiddleware } from "./middleware/error";
@@ -10,59 +12,49 @@ import analyticsRouter from "./routes/analytics.route";
 import layoutRouter from "./routes/layout.route";
 import { rateLimit } from "express-rate-limit";
 
-const app = express();
-
-// CORS configuration
-const corsOptions = {
-  origin: 'http://localhost:3000',
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  credentials: true,
-  allowedHeaders: 'Content-Type,Authorization',
-};
-
-app.use(cors(corsOptions));
-
-// Body parser
+// body parser
 app.use(express.json({ limit: "50mb" }));
 
-// Cookie parser
+// cookie parser
 app.use(cookieParser());
 
-// API request limits
+// cors => cross origin resource sharing
+app.use(cors());
+
+// api requests limit
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // Limit each IP to 100 requests per windowMs
+  windowMs: 15 * 60 * 1000,
+  max: 100,
   standardHeaders: "draft-7",
   legacyHeaders: false,
 });
 
-// Apply rate limiter
-app.use(limiter);
+// routes
+app.use(
+  "/api/v1",
+  userRouter,
+  orderRouter,
+  courseRouter,
+  notificationRouter,
+  analyticsRouter,
+  layoutRouter
+);
 
-// Define routes
-app.use("/api/v1", userRouter);
-app.use("/api/v1", orderRouter);
-app.use("/api/v1", courseRouter);
-app.use("/api/v1", notificationRouter);
-app.use("/api/v1", analyticsRouter);
-app.use("/api/v1", layoutRouter);
-
-// Test API endpoint
-app.get("/test", (req: Request, res: Response) => {
+// testing api
+app.get("/test", (req: Request, res: Response, next: NextFunction) => {
   res.status(200).json({
-    success: true,
+    succcess: true,
     message: "API is working",
   });
 });
 
-// Handle unknown routes
+// unknown route
 app.all("*", (req: Request, res: Response, next: NextFunction) => {
   const err = new Error(`Route ${req.originalUrl} not found`) as any;
   err.statusCode = 404;
   next(err);
 });
 
-// Error handling middleware
+// middleware calls
+app.use(limiter);
 app.use(ErrorMiddleware);
-
-export default app;
