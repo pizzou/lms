@@ -1,6 +1,4 @@
-require("dotenv").config();
-import express, { NextFunction, Request, Response } from "express";
-export const app = express();
+import express, { Request, Response, NextFunction } from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import { ErrorMiddleware } from "./middleware/error";
@@ -12,56 +10,59 @@ import analyticsRouter from "./routes/analytics.route";
 import layoutRouter from "./routes/layout.route";
 import { rateLimit } from "express-rate-limit";
 
-// body parser
-app.use(express.json({ limit: "50mb" }));
+const app = express();
 
-// cookie parser
-app.use(cookieParser());
-
-// cors => cross origin resource sharing
+// CORS configuration
 const corsOptions = {
-  origin: 'http://localhost:3000', // The URL of the frontend application
+  origin: 'http://localhost:3000',
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  credentials: true, // Allow credentials (cookies, authorization headers, etc.)
-  allowedHeaders: 'Content-Type,Authorization', // Specify allowed headers
+  credentials: true,
+  allowedHeaders: 'Content-Type,Authorization',
 };
 
 app.use(cors(corsOptions));
 
-// api requests limit
+// Body parser
+app.use(express.json({ limit: "50mb" }));
+
+// Cookie parser
+app.use(cookieParser());
+
+// API request limits
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 100, // Limit each IP to 100 requests per windowMs
-  standardHeaders: "draft-7", // Set standard headers
-  legacyHeaders: false, // Disable the X-RateLimit-* headers
+  standardHeaders: "draft-7",
+  legacyHeaders: false,
 });
 
-// routes
-app.use(
-  "/api/v1",
-  userRouter,
-  orderRouter,
-  courseRouter,
-  notificationRouter,
-  analyticsRouter,
-  layoutRouter
-);
+// Apply rate limiter
+app.use(limiter);
 
-// testing api
-app.get("/test", (req: Request, res: Response, next: NextFunction) => {
+// Define routes
+app.use("/api/v1", userRouter);
+app.use("/api/v1", orderRouter);
+app.use("/api/v1", courseRouter);
+app.use("/api/v1", notificationRouter);
+app.use("/api/v1", analyticsRouter);
+app.use("/api/v1", layoutRouter);
+
+// Test API endpoint
+app.get("/test", (req: Request, res: Response) => {
   res.status(200).json({
     success: true,
     message: "API is working",
   });
 });
 
-// unknown route
+// Handle unknown routes
 app.all("*", (req: Request, res: Response, next: NextFunction) => {
   const err = new Error(`Route ${req.originalUrl} not found`) as any;
   err.statusCode = 404;
   next(err);
 });
 
-// middleware calls
-app.use(limiter);
+// Error handling middleware
 app.use(ErrorMiddleware);
+
+export default app;
