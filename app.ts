@@ -19,14 +19,21 @@ app.use(express.json({ limit: "50mb" }));
 app.use(cookieParser());
 
 // cors => cross origin resource sharing
-app.use(cors());
+const corsOptions = {
+  origin: 'http://localhost:3000', // The URL of the frontend application
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true, // Allow credentials (cookies, authorization headers, etc.)
+  allowedHeaders: 'Content-Type,Authorization', // Specify allowed headers
+};
+
+app.use(cors(corsOptions));
 
 // api requests limit
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 100,
-  standardHeaders: "draft-7",
-  legacyHeaders: false,
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // Limit each IP to 100 requests per windowMs
+  standardHeaders: "draft-7", // Set standard headers
+  legacyHeaders: false, // Disable the X-RateLimit-* headers
 });
 
 // routes
@@ -43,7 +50,7 @@ app.use(
 // testing api
 app.get("/test", (req: Request, res: Response, next: NextFunction) => {
   res.status(200).json({
-    succcess: true,
+    success: true,
     message: "API is working",
   });
 });
