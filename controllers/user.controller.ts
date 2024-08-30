@@ -146,6 +146,10 @@ interface ILoginRequest {
 export const loginUser = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
+<<<<<<< HEAD
+=======
+      console.log(req.body)
+>>>>>>> 16941003efc7d7482b012d6cf7b8613fd2acd04d
       const { email, password } = req.body as ILoginRequest;
       console.log(email, password);
       if (!email || !password) {
@@ -444,4 +448,8 @@ export const deleteUser = CatchAsyncError(
       return next(new ErrorHandler(error.message, 400));
     }
   }
+<<<<<<< HEAD
 );
+=======
+);
+>>>>>>> 16941003efc7d7482b012d6cf7b8613fd2acd04d

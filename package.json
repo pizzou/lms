@@ -17,6 +17,10 @@
   "license": "ISC",
   "dependencies": {
     "@types/bcryptjs": "^2.4.2",
+<<<<<<< HEAD
+=======
+    "@types/cookie-parser": "^1.4.3",
+>>>>>>> 16941003efc7d7482b012d6cf7b8613fd2acd04d
     "@types/cors": "^2.8.13",
     "@types/express": "^4.17.17",
     "@types/jsonwebtoken": "^9.0.2",
@@ -40,6 +44,7 @@
     "socket.io": "^4.7.2",
     "stripe": "^13.3.0",
     "ts-node-dev": "^2.0.0",
+<<<<<<< HEAD
     "typescript": "^5.1.6"
   },
   "devDependencies": {
@@ -47,5 +52,15 @@
     "@types/ejs": "^3.1.2",
     "@types/node-cron": "^3.0.8",
     "@types/nodemailer": "^6.4.9"
+=======
+    "typescript": "^5.1.6",
+    "uuid": "^10.0.0"
+  },
+  "devDependencies": {
+    "@types/ejs": "^3.1.2",
+    "@types/node-cron": "^3.0.8",
+    "@types/nodemailer": "^6.4.9",
+    "@types/uuid": "^10.0.0"
+>>>>>>> 16941003efc7d7482b012d6cf7b8613fd2acd04d
   }
 }
