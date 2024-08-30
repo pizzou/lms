@@ -23,13 +23,13 @@ app.use(cookieParser());
 
 // Modify the corsOptions object to allow requests from localhost:3000
 const corsOptions = {
-  origin: 'http://localhost:3000', // Replace this with your frontend's origin
+  origin: 'http://localhost:3000', // Allow your frontend's origin
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  credentials: true, // This allows the server to accept cookies from the frontend
-  allowedHeaders: 'Content-Type,Authorization', // Specify the allowed headers
+  credentials: true, // Allow credentials (cookies, etc.)
+  allowedHeaders: 'Content-Type,Authorization', // Headers the frontend can send
 };
 
-app.use(cors(corsOptions));;
+app.use(cors(corsOptions));
 
 
 // api requests limit
